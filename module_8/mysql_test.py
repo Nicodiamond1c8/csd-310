@@ -17,12 +17,12 @@ try:
     input("\n\n Press any key to continue...")
 
 except mysql.connector.Error as err:
-    if err.errno== errorcode.ER_ACCESS_DENIED_ERROR:
+    if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
         print(" The supplied username or password are invalid")
 
     elif err.errno == errorcode.ER_BAD_DB_ERROR:
         print(" The specified database does not exist")
-    
+
     else:
         print(err)
 
