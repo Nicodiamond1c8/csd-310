@@ -1,7 +1,11 @@
+#Nico Diamond
+#CYBR 410-308H
+
 import sys
 import mysql.connector
 from mysql.connector import errorcode
 
+#database config
 config = {
     "user": "whatabook_user",
     "password": "MySQL8IsGreat!",
@@ -10,6 +14,7 @@ config = {
     "raise_on_warnings": True
 }
 
+#method for the main menu
 def show_menu():
     print("\n -- Main Menu -- \n")
 
@@ -24,6 +29,7 @@ def show_menu():
 
         sys.exit(0)
 
+#method for showing all books inside the database
 def show_books(cursor):
     cursor.execute("SELECT book_id, book_name, author, details from book")
 
@@ -34,6 +40,7 @@ def show_books(cursor):
     for book in books:
         print(" Book ID: {}\n Book Name: {}\n Author: {}\n Details: {}\n".format(book[0], book[1], book[2], book[3]))
 
+#method for showing WhatABook locations
 def show_locations(cursor):
     cursor.execute("SELECT store_id, locale from store")
 
@@ -44,6 +51,7 @@ def show_locations(cursor):
     for location in locations:
         print("Location: {}\n".format(location[1]))
 
+#method for validating the user, exits program if invalid ID is used
 def validate_user():
 
     try:
@@ -51,15 +59,16 @@ def validate_user():
             input('\n Please Enter Your Customer ID Number: '))
 
         if user_id < 0 or user_id > 3:
-            print("\n Invalid customer number, program terminated...\n")
+            print("\n Invalid Customer ID, program terminated...\n")
             sys.exit(0)
 
         return user_id
     except ValueError:
-        print("\n Invalid number, program terminated...\n")
+        print("\n Invalid Customer ID, program terminated...\n")
 
         sys.exit(0)
 
+#method for user account menu
 def show_account_menu():
 
     try:
@@ -74,6 +83,7 @@ def show_account_menu():
 
         sys.exit(0)
 
+#method for showing the selected user's wish list
 def show_wishlist(cursor, user_id):
 
     cursor.execute("SELECT user.user_id, user.first_name, user.last_name, book.book_id, book.book_name, book.author FROM wishlist INNER JOIN user ON wishlist.user_id = user.user_id INNER JOIN book ON wishlist.book_id = book.book_id WHERE user.user_id = {}".format(user_id))
@@ -85,6 +95,7 @@ def show_wishlist(cursor, user_id):
     for book in wishlist:
         print(" Book Name: {}\n Author: {}\n".format(book[4], book[5]))
 
+#method to show all books not in selected user's wish list
 def show_books_to_add(cursor, user_id):
 
     query = ("SELECT book_id, book_name, author, details FROM book WHERE book_id NOT IN (SELECT book_id FROM wishlist WHERE user_id = {})".format(user_id))
@@ -100,6 +111,7 @@ def show_books_to_add(cursor, user_id):
     for book in books_to_add:
         print("Book Id: {}\nBook Name: {}\nAuthor: {}\nDetails: {}\n".format(book[0], book[1], book[2], book[3]))
 
+#method to add selected book to selected user's wishlist
 def add_book_to_wishlist(cursor, user_id, book_id):
     cursor.execute("INSERT INTO wishlist(user_id, book_id) VALUES({}, {})".format(
         user_id, book_id))
